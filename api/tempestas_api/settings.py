@@ -34,8 +34,6 @@ USE_X_FORWARDED_HOST = True
 
 INSTALLED_APPS = [
     'material',
-    'django.contrib.admin',
-    'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
@@ -45,7 +43,6 @@ INSTALLED_APPS = [
     'wx',
     'rest_framework',
     'corsheaders',
-    'rest_framework.authtoken',
     'colorfield',
     'import_export',
 ]
@@ -56,12 +53,34 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
 ROOT_URLCONF = 'tempestas_api.urls'
+
+context_processors = [
+    'django.template.context_processors.debug',
+    'django.template.context_processors.request',
+    'django.contrib.messages.context_processors.messages',
+    'wx.context_processors.get_surface_context',
+]
+
+if not os.getenv("OPENCDMS_API"):
+    INSTALLED_APPS.extend([
+        'django.contrib.admin',
+        'django.contrib.auth',
+        'rest_framework.authtoken',
+    ])
+
+    MIDDLEWARE.extend([
+        'django.contrib.auth.middleware.AuthenticationMiddleware',
+    ])
+
+    context_processors.extend([
+        'django.contrib.auth.context_processors.auth',
+        'wx.context_processors.get_user_wx_permissions',
+    ])
 
 TEMPLATES = [
     {
@@ -71,14 +90,7 @@ TEMPLATES = [
         ],
         'APP_DIRS': True,
         'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-                'wx.context_processors.get_surface_context',
-                'wx.context_processors.get_user_wx_permissions',
-            ],
+            'context_processors': context_processors,
         },
     },
 ]

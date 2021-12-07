@@ -21,20 +21,20 @@ from celery.utils.log import get_task_logger
 from django.core.cache import cache
 from django.db import connection
 
-from tempestas_api import settings
-from wx.decoders.flash import read_data as read_data_flash
-from wx.decoders.hobo import read_file as read_file_hobo
-from wx.decoders.hydro import read_file as read_file_hydrology
-from wx.decoders.manual_data import read_file as read_file_manual_data
-from wx.decoders.manual_data_hourly import read_file as read_file_manual_data_hourly
-from wx.decoders.nesa import read_data as read_data_nesa
-from wx.decoders.surface import read_file as read_file_surface
-from wx.decoders.toa5 import read_file
-from wx.models import DataFile
-from wx.models import Document
-from wx.models import NoaaDcp
-from wx.models import Station
-from wx.models import StationFileIngestion, StationDataFile, HourlySummaryTask, DailySummaryTask, \
+from ..tempestas_api import settings
+from .decoders.flash import read_data as read_data_flash
+from .decoders.hobo import read_file as read_file_hobo
+from .decoders.hydro import read_file as read_file_hydrology
+from .decoders.manual_data import read_file as read_file_manual_data
+from .decoders.manual_data_hourly import read_file as read_file_manual_data_hourly
+from .decoders.nesa import read_data as read_data_nesa
+from .decoders.surface import read_file as read_file_surface
+from .decoders.toa5 import read_file
+from .models import DataFile
+from .models import Document
+from .models import NoaaDcp
+from .models import Station
+from .models import StationFileIngestion, StationDataFile, HourlySummaryTask, DailySummaryTask, \
     HydroMLPredictionStation, HydroMLPredictionMapping
 
 logger = get_task_logger(__name__)
@@ -792,7 +792,7 @@ def process_received_data(entl_socket):
         else:
             latitude = int.from_bytes(data[10:14], byteorder='big', signed=True) / 1e7
             longitude = int.from_bytes(data[14:18], byteorder='big', signed=True) / 1e7
-            if (15 <= latitude <= 19 and -90 <= longitude <= -87):
+            if 15 <= latitude <= 19 and -90 <= longitude <= -87:
                 save_flash_data.delay(data.decode('latin-1'))
 
 
@@ -814,7 +814,7 @@ def export_data(station_id, source, start_date, end_date, variable_ids, file_id)
     current_datafile = DataFile.objects.get(pk=file_id)
     variable_ids = tuple(variable_ids)
 
-    # Diferent data sources have diferents columns names for the measurement data and diferents intervals
+    # Different data sources have different columns names for the measurement data and different intervals
     if source == 'raw_data':
         datetime_variable = 'datetime'
         data_source_description = 'Raw data'
