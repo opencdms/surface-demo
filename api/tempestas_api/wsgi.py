@@ -11,6 +11,9 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tempestas_api.settings")
+if not os.getenv("OPENCDMS_API"):
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tempestas_api.settings")
+else:
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "surface.api.tempestas_api.settings")
 
 application = get_wsgi_application()
