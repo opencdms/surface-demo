@@ -42,13 +42,21 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.gis',
     'django_celery_beat',
-    'wx',
     'rest_framework',
     'corsheaders',
     'rest_framework.authtoken',
     'colorfield',
     'import_export',
 ]
+
+if not os.getenv("OPENCDMS_API"):
+    INSTALLED_APPS.extend([
+        'wx'
+    ])
+else:
+    INSTALLED_APPS.extend([
+        'surface.api.wx'
+    ])
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
